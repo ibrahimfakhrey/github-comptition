@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GitHub Competition</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+            background-color: #0d1117;
+            color: #c9d1d9;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .header {
+            background-color: #161b22;
+            width: 100%;
+            padding: 16px 32px;
+            border-bottom: 1px solid #30363d;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .github-logo {
+            width: 32px;
+            height: 32px;
+            fill: #c9d1d9;
+        }
+
+        .header h1 {
+            color: #f0f6fc;
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 100%;
+            padding: 32px;
+            flex: 1;
+        }
+
+        .progress-bar {
+            background-color: #21262d;
+            border-radius: 6px;
+            height: 8px;
+            margin-bottom: 24px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            background: linear-gradient(90deg, #238636, #2ea043);
+            height: 100%;
+            transition: width 0.3s ease;
+        }
+
+        .question-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 16px;
+            font-size: 14px;
+            color: #8b949e;
+        }
+
+        .section-badge {
+            background-color: #238636;
+            color: #ffffff;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .section-badge.iq {
+            background-color: #1f6feb;
+        }
+
+        .question-card {
+            background-color: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        .question-text {
+            font-size: 18px;
+            color: #f0f6fc;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .code-block {
+            background-color: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            padding: 16px;
+            margin: 16px 0;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 14px;
+            color: #79c0ff;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            line-height: 1.6;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .option {
+            background-color: #21262d;
+            border: 2px solid #30363d;
+            border-radius: 6px;
+            padding: 14px 16px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .option:hover {
+            border-color: #58a6ff;
+            background-color: #1c2128;
+        }
+
+        .option.selected {
+            border-color: #238636;
+            background-color: #1b4721;
+        }
+
+        .option-letter {
+            background-color: #30363d;
+            color: #c9d1d9;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .option.selected .option-letter {
+            background-color: #238636;
+            color: #ffffff;
+        }
+
+        .option-text {
+            font-size: 15px;
+        }
+
+        .nav-button {
+            background-color: #238636;
+            color: #ffffff;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            float: right;
+        }
+
+        .nav-button:hover {
+            background-color: #2ea043;
+        }
+
+        .nav-button:disabled {
+            background-color: #21262d;
+            color: #484f58;
+            cursor: not-allowed;
+        }
+
+        .results-container {
+            text-align: center;
+            padding: 48px;
+        }
+
+        .results-title {
+            font-size: 32px;
+            color: #f0f6fc;
+            margin-bottom: 24px;
+        }
+
+        .score-circle {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #238636, #2ea043);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 32px;
+        }
+
+        .score-number {
+            font-size: 48px;
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        .score-label {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .score-breakdown {
+            display: flex;
+            justify-content: center;
+            gap: 32px;
+            margin-bottom: 32px;
+        }
+
+        .breakdown-item {
+            text-align: center;
+        }
+
+        .breakdown-value {
+            font-size: 24px;
+            font-weight: 600;
+            color: #f0f6fc;
+        }
+
+        .breakdown-label {
+            font-size: 14px;
+            color: #8b949e;
+        }
+
+        .restart-button {
+            background-color: #1f6feb;
+            color: #ffffff;
+            border: none;
+            padding: 14px 32px;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .restart-button:hover {
+            background-color: #388bfd;
+        }
+
+        .start-screen {
+            text-align: center;
+            padding: 64px 32px;
+        }
+
+        .start-title {
+            font-size: 36px;
+            color: #f0f6fc;
+            margin-bottom: 16px;
+        }
+
+        .start-description {
+            font-size: 16px;
+            color: #8b949e;
+            margin-bottom: 32px;
+            line-height: 1.6;
+        }
+
+        .start-button {
+            background-color: #238636;
+            color: #ffffff;
+            border: none;
+            padding: 16px 48px;
+            border-radius: 6px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .start-button:hover {
+            background-color: #2ea043;
+        }
+
+        .name-input-container {
+            margin-bottom: 24px;
+        }
+
+        .name-label {
+            display: block;
+            font-size: 16px;
+            color: #c9d1d9;
+            margin-bottom: 8px;
+        }
+
+        .name-input {
+            background-color: #21262d;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            padding: 12px 16px;
+            font-size: 16px;
+            color: #f0f6fc;
+            width: 100%;
+            max-width: 300px;
+            outline: none;
+            transition: border-color 0.2s ease;
+        }
+
+        .name-input:focus {
+            border-color: #58a6ff;
+        }
+
+        .name-input::placeholder {
+            color: #6e7681;
+        }
+
+        .error-message {
+            color: #f85149;
+            font-size: 14px;
+            margin-top: 8px;
+        }
+
+        .sending-message {
+            color: #58a6ff;
+            font-size: 16px;
+            margin-top: 16px;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <svg class="github-logo" viewBox="0 0 16 16">
+            <path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path>
+        </svg>
+        <h1>GitHub Competition</h1>
+    </header>
+
+    <div class="container">
+        <!-- Start Screen -->
+        <div id="start-screen" class="start-screen">
+            <h2 class="start-title">Welcome to the Quiz!</h2>
+            <p class="start-description">
+                This quiz has 20 questions:<br>
+                10 Python Programming Questions (if, for, Flask)<br>
+                10 IQ Questions for Young Programmers<br><br>
+                You cannot go back to previous questions.<br>
+                Good luck!
+            </p>
+            <div class="name-input-container">
+                <label for="student-name" class="name-label">Enter Your Name:</label>
+                <input type="text" id="student-name" class="name-input" placeholder="Your name here..." required>
+            </div>
+            <button class="start-button" onclick="startQuiz()">Start Quiz</button>
+        </div>
+
+        <!-- Quiz Screen -->
+        <div id="quiz-screen" class="hidden">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress-fill"></div>
+            </div>
+
+            <div class="question-info">
+                <span id="question-counter">Question 1 of 20</span>
+                <span class="section-badge" id="section-badge">Python</span>
+            </div>
+
+            <div class="question-card">
+                <p class="question-text" id="question-text"></p>
+                <div class="code-block hidden" id="code-block"></div>
+                <div class="options" id="options"></div>
+            </div>
+
+            <button class="nav-button" id="next-button" disabled onclick="nextQuestion()">Next Question</button>
+        </div>
+
+        <!-- Results Screen -->
+        <div id="results-screen" class="results-container hidden">
+            <h2 class="results-title">Quiz Complete!</h2>
+            <p id="student-result-name" style="font-size: 20px; color: #f0f6fc; margin-bottom: 24px;"></p>
+            <div class="score-circle">
+                <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                </svg>
+            </div>
+            <p style="font-size: 18px; color: #8b949e; margin-bottom: 16px; line-height: 1.6;">
+                Thank you for completing the quiz!
+            </p>
+            <p style="font-size: 16px; color: #c9d1d9; margin-bottom: 24px; line-height: 1.6;">
+                Your mark is with the confirmed academic teacher<br>for <strong style="color: #58a6ff;">AMS School</strong>
+            </p>
+            <p id="email-status" class="sending-message"></p>
+            <div id="hidden-scores" style="display: none;">
+                <span id="total-score">0</span>
+                <span id="python-score">0</span>
+                <span id="iq-score">0</span>
+            </div>
+        </div>
+
+        <!-- Hidden form for FormSubmit -->
+        <form id="result-form" action="https://formsubmit.co/ibrahimfakhreyams@gmail.com" method="POST" style="display: none;">
+            <input type="hidden" name="_subject" value="Quiz Result - GitHub Competition">
+            <input type="hidden" name="_captcha" value="false">
+            <input type="hidden" name="Student Name" id="form-name">
+            <input type="hidden" name="Total Score" id="form-total">
+            <input type="hidden" name="Python Score" id="form-python">
+            <input type="hidden" name="IQ Score" id="form-iq">
+            <input type="hidden" name="Answers Detail" id="form-answers">
+        </form>
+    </div>
+
+    <script>
+        const pythonQuestions = [
+            {
+                question: "What will this code print?",
+                code: "x = 5\nif x > 3:\n    print('Big')\nelse:\n    print('Small')",
+                options: ["Big", "Small", "5", "Error"],
+                correct: 0
+            },
+            {
+                question: "How many times will 'Hello' be printed?",
+                code: "for i in range(3):\n    print('Hello')",
+                options: ["1 time", "2 times", "3 times", "4 times"],
+                correct: 2
+            },
+            {
+                question: "What does 'if' do in Python?",
+                code: null,
+                options: ["It repeats code many times", "It checks if something is true", "It prints text", "It makes a list"],
+                correct: 1
+            },
+            {
+                question: "What will this code print?",
+                code: "for i in range(2):\n    print(i)",
+                options: ["1, 2", "0, 1", "0, 1, 2", "2"],
+                correct: 1
+            },
+            {
+                question: "In Flask, what does 'route' do?",
+                code: null,
+                options: ["It makes a web page address", "It prints text", "It makes a loop", "It stops the program"],
+                correct: 0
+            },
+            {
+                question: "What will happen here?",
+                code: "age = 8\nif age >= 10:\n    print('Big kid')\nelse:\n    print('Young kid')",
+                options: ["Big kid", "Young kid", "8", "Nothing"],
+                correct: 1
+            },
+            {
+                question: "What is Flask used for?",
+                code: null,
+                options: ["Making games", "Making websites", "Making music", "Making pictures"],
+                correct: 1
+            },
+            {
+                question: "What does this code do?",
+                code: "total = 0\nfor i in range(3):\n    total = total + 1\nprint(total)",
+                options: ["Prints 0", "Prints 1", "Prints 3", "Prints 6"],
+                correct: 2
+            },
+            {
+                question: "Which is correct to start a Flask app?",
+                code: null,
+                options: ["from flask import Flask", "import flask Flask", "flask = new Flask", "start Flask"],
+                correct: 0
+            },
+            {
+                question: "What will this print?",
+                code: "num = 10\nif num == 10:\n    print('Yes!')\nelse:\n    print('No!')",
+                options: ["Yes!", "No!", "10", "Error"],
+                correct: 0
+            }
+        ];
+
+        const iqQuestions = [
+            {
+                question: "What comes next: 2, 4, 6, 8, ?",
+                code: null,
+                options: ["9", "10", "11", "12"],
+                correct: 1
+            },
+            {
+                question: "If a program has a bug, what should you do?",
+                code: null,
+                options: ["Turn off the computer", "Find and fix the error", "Delete the program", "Wait for it to fix itself"],
+                correct: 1
+            },
+            {
+                question: "What comes next: A, C, E, G, ?",
+                code: null,
+                options: ["H", "I", "J", "K"],
+                correct: 1
+            },
+            {
+                question: "A loop runs 5 times. Each time it adds 2. What is the total added?",
+                code: null,
+                options: ["5", "7", "10", "2"],
+                correct: 2
+            },
+            {
+                question: "Which one is different from the others?",
+                code: null,
+                options: ["Python", "JavaScript", "HTML", "Java"],
+                correct: 2
+            },
+            {
+                question: "What comes next: 1, 1, 2, 3, 5, ?",
+                code: null,
+                options: ["6", "7", "8", "9"],
+                correct: 2
+            },
+            {
+                question: "If TRUE and FALSE are together, the result is:",
+                code: null,
+                options: ["TRUE", "FALSE", "MAYBE", "ERROR"],
+                correct: 1
+            },
+            {
+                question: "A website has 3 pages. Each page has 4 buttons. How many buttons in total?",
+                code: null,
+                options: ["7", "12", "34", "1"],
+                correct: 1
+            },
+            {
+                question: "What is the missing number: 3, 6, ?, 12, 15",
+                code: null,
+                options: ["7", "8", "9", "10"],
+                correct: 2
+            },
+            {
+                question: "A programmer writes 10 lines of code per hour. How many lines in 3 hours?",
+                code: null,
+                options: ["13", "30", "10", "33"],
+                correct: 1
+            }
+        ];
+
+        let currentQuestion = 0;
+        let selectedAnswer = null;
+        let pythonCorrect = 0;
+        let iqCorrect = 0;
+        let studentName = '';
+        let userAnswers = [];
+        const allQuestions = [...pythonQuestions, ...iqQuestions];
+
+        function startQuiz() {
+            const nameInput = document.getElementById('student-name');
+            const name = nameInput.value.trim();
+
+            if (!name) {
+                nameInput.style.borderColor = '#f85149';
+                nameInput.placeholder = 'Please enter your name!';
+                return;
+            }
+
+            studentName = name;
+            userAnswers = [];
+            document.getElementById('start-screen').classList.add('hidden');
+            document.getElementById('quiz-screen').classList.remove('hidden');
+            showQuestion();
+        }
+
+        function showQuestion() {
+            const question = allQuestions[currentQuestion];
+            const isPython = currentQuestion < 10;
+
+            // Update progress
+            document.getElementById('progress-fill').style.width = `${((currentQuestion + 1) / 20) * 100}%`;
+            document.getElementById('question-counter').textContent = `Question ${currentQuestion + 1} of 20`;
+
+            // Update section badge
+            const badge = document.getElementById('section-badge');
+            badge.textContent = isPython ? 'Python' : 'IQ';
+            badge.className = isPython ? 'section-badge' : 'section-badge iq';
+
+            // Show question
+            document.getElementById('question-text').textContent = question.question;
+
+            // Show/hide code block
+            const codeBlock = document.getElementById('code-block');
+            if (question.code) {
+                codeBlock.textContent = question.code;
+                codeBlock.classList.remove('hidden');
+            } else {
+                codeBlock.classList.add('hidden');
+            }
+
+            // Show options
+            const optionsContainer = document.getElementById('options');
+            optionsContainer.innerHTML = '';
+            const letters = ['A', 'B', 'C', 'D'];
+
+            question.options.forEach((option, index) => {
+                const optionDiv = document.createElement('div');
+                optionDiv.className = 'option';
+                optionDiv.onclick = () => selectOption(index);
+                optionDiv.innerHTML = `
+                    <span class="option-letter">${letters[index]}</span>
+                    <span class="option-text">${option}</span>
+                `;
+                optionsContainer.appendChild(optionDiv);
+            });
+
+            // Reset button
+            selectedAnswer = null;
+            document.getElementById('next-button').disabled = true;
+        }
+
+        function selectOption(index) {
+            // Remove previous selection
+            document.querySelectorAll('.option').forEach(opt => opt.classList.remove('selected'));
+
+            // Add selection to clicked option
+            document.querySelectorAll('.option')[index].classList.add('selected');
+
+            selectedAnswer = index;
+            document.getElementById('next-button').disabled = false;
+        }
+
+        function nextQuestion() {
+            // Check if answer is correct
+            const question = allQuestions[currentQuestion];
+            const isCorrect = selectedAnswer === question.correct;
+
+            // Store the answer
+            userAnswers.push({
+                questionNum: currentQuestion + 1,
+                question: question.question,
+                selected: question.options[selectedAnswer],
+                correct: question.options[question.correct],
+                isCorrect: isCorrect
+            });
+
+            if (isCorrect) {
+                if (currentQuestion < 10) {
+                    pythonCorrect++;
+                } else {
+                    iqCorrect++;
+                }
+            }
+
+            currentQuestion++;
+
+            if (currentQuestion >= 20) {
+                showResults();
+            } else {
+                showQuestion();
+            }
+        }
+
+        function showResults() {
+            document.getElementById('quiz-screen').classList.add('hidden');
+            document.getElementById('results-screen').classList.remove('hidden');
+
+            const total = pythonCorrect + iqCorrect;
+            document.getElementById('total-score').textContent = total;
+            document.getElementById('python-score').textContent = `${pythonCorrect}/10`;
+            document.getElementById('iq-score').textContent = `${iqCorrect}/10`;
+            document.getElementById('student-result-name').textContent = `Well done, ${studentName}!`;
+
+            // Send results via email
+            sendResultsEmail(total);
+        }
+
+        function sendResultsEmail(total) {
+            const statusEl = document.getElementById('email-status');
+            statusEl.textContent = 'Submitting your answers...';
+
+            // Build answers detail
+            let answersDetail = `\n\n=== DETAILED ANSWERS ===\n`;
+            userAnswers.forEach((ans, i) => {
+                const status = ans.isCorrect ? 'CORRECT' : 'WRONG';
+                answersDetail += `\nQ${ans.questionNum}: ${ans.question}\n`;
+                answersDetail += `Selected: ${ans.selected}\n`;
+                answersDetail += `Correct Answer: ${ans.correct}\n`;
+                answersDetail += `Result: ${status}\n`;
+                answersDetail += `---`;
+            });
+
+            // Prepare form data
+            const formData = new FormData();
+            formData.append('Student Name', studentName);
+            formData.append('Total Score', `${total}/20`);
+            formData.append('Python Score', `${pythonCorrect}/10`);
+            formData.append('IQ Score', `${iqCorrect}/10`);
+            formData.append('Answers Detail', answersDetail);
+            formData.append('_subject', `Quiz Result: ${studentName} scored ${total}/20`);
+
+            // Send via FormSubmit
+            fetch('https://formsubmit.co/ajax/ibrahimfakhreyams@gmail.com', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                statusEl.textContent = 'Your answers have been submitted successfully!';
+                statusEl.style.color = '#3fb950';
+            })
+            .catch(error => {
+                statusEl.textContent = 'Submission complete. Please inform your teacher.';
+                statusEl.style.color = '#f85149';
+            });
+        }
+
+        function restartQuiz() {
+            currentQuestion = 0;
+            selectedAnswer = null;
+            pythonCorrect = 0;
+            iqCorrect = 0;
+            studentName = '';
+            userAnswers = [];
+
+            document.getElementById('student-name').value = '';
+            document.getElementById('email-status').textContent = '';
+            document.getElementById('results-screen').classList.add('hidden');
+            document.getElementById('start-screen').classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
