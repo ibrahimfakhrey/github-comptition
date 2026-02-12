@@ -81,7 +81,7 @@
             font-weight: 600;
         }
 
-        .section-badge.iq {
+        .section-badge.while-badge {
             background-color: #1f6feb;
         }
 
@@ -153,6 +153,7 @@
             justify-content: center;
             font-weight: 600;
             font-size: 14px;
+            flex-shrink: 0;
         }
 
         .option.selected .option-letter {
@@ -208,55 +209,6 @@
             align-items: center;
             justify-content: center;
             margin: 0 auto 32px;
-        }
-
-        .score-number {
-            font-size: 48px;
-            font-weight: 700;
-            color: #ffffff;
-        }
-
-        .score-label {
-            font-size: 14px;
-            color: rgba(255, 255, 255, 0.8);
-        }
-
-        .score-breakdown {
-            display: flex;
-            justify-content: center;
-            gap: 32px;
-            margin-bottom: 32px;
-        }
-
-        .breakdown-item {
-            text-align: center;
-        }
-
-        .breakdown-value {
-            font-size: 24px;
-            font-weight: 600;
-            color: #f0f6fc;
-        }
-
-        .breakdown-label {
-            font-size: 14px;
-            color: #8b949e;
-        }
-
-        .restart-button {
-            background-color: #1f6feb;
-            color: #ffffff;
-            border: none;
-            padding: 14px 32px;
-            border-radius: 6px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background-color 0.2s ease;
-        }
-
-        .restart-button:hover {
-            background-color: #388bfd;
         }
 
         .start-screen {
@@ -325,12 +277,6 @@
             color: #6e7681;
         }
 
-        .error-message {
-            color: #f85149;
-            font-size: 14px;
-            margin-top: 8px;
-        }
-
         .sending-message {
             color: #58a6ff;
             font-size: 16px;
@@ -355,9 +301,10 @@
         <div id="start-screen" class="start-screen">
             <h2 class="start-title">Welcome to the Quiz!</h2>
             <p class="start-description">
-                This quiz has 20 questions:<br>
-                10 Python Programming Questions (if, for, Flask)<br>
-                10 IQ Questions for Young Programmers<br><br>
+                This quiz has 30 questions:<br>
+                15 Python <strong>For Loop</strong> Questions<br>
+                15 Python <strong>While Loop</strong> Questions<br><br>
+                Difficulty: Easy to Medium<br>
                 You cannot go back to previous questions.<br>
                 Good luck!
             </p>
@@ -375,8 +322,8 @@
             </div>
 
             <div class="question-info">
-                <span id="question-counter">Question 1 of 20</span>
-                <span class="section-badge" id="section-badge">Python</span>
+                <span id="question-counter">Question 1 of 30</span>
+                <span class="section-badge" id="section-badge">For Loop</span>
             </div>
 
             <div class="question-card">
@@ -405,159 +352,215 @@
                 Your mark is with the confirmed academic teacher<br>for <strong style="color: #58a6ff;">AMS School</strong>
             </p>
             <p id="email-status" class="sending-message"></p>
-            <div id="hidden-scores" style="display: none;">
-                <span id="total-score">0</span>
-                <span id="python-score">0</span>
-                <span id="iq-score">0</span>
-            </div>
         </div>
-
-        <!-- Hidden form for FormSubmit -->
-        <form id="result-form" action="https://formsubmit.co/ibrahimfakhreyams@gmail.com" method="POST" style="display: none;">
-            <input type="hidden" name="_subject" value="Quiz Result - GitHub Competition">
-            <input type="hidden" name="_captcha" value="false">
-            <input type="hidden" name="Student Name" id="form-name">
-            <input type="hidden" name="Total Score" id="form-total">
-            <input type="hidden" name="Python Score" id="form-python">
-            <input type="hidden" name="IQ Score" id="form-iq">
-            <input type="hidden" name="Answers Detail" id="form-answers">
-        </form>
     </div>
 
     <script>
-        const pythonQuestions = [
-            {
-                question: "What will this code print?",
-                code: "x = 5\nif x > 3:\n    print('Big')\nelse:\n    print('Small')",
-                options: ["Big", "Small", "5", "Error"],
-                correct: 0
-            },
+        const forQuestions = [
             {
                 question: "How many times will 'Hello' be printed?",
-                code: "for i in range(3):\n    print('Hello')",
-                options: ["1 time", "2 times", "3 times", "4 times"],
-                correct: 2
-            },
-            {
-                question: "What does 'if' do in Python?",
-                code: null,
-                options: ["It repeats code many times", "It checks if something is true", "It prints text", "It makes a list"],
+                code: "for i in range(5):\n    print('Hello')",
+                options: ["4 times", "5 times", "6 times", "1 time"],
                 correct: 1
             },
             {
                 question: "What will this code print?",
-                code: "for i in range(2):\n    print(i)",
-                options: ["1, 2", "0, 1", "0, 1, 2", "2"],
+                code: "for i in range(3):\n    print(i)",
+                options: ["1 2 3", "0 1 2", "0 1 2 3", "1 2"],
                 correct: 1
             },
             {
-                question: "In Flask, what does 'route' do?",
-                code: null,
-                options: ["It makes a web page address", "It prints text", "It makes a loop", "It stops the program"],
-                correct: 0
-            },
-            {
-                question: "What will happen here?",
-                code: "age = 8\nif age >= 10:\n    print('Big kid')\nelse:\n    print('Young kid')",
-                options: ["Big kid", "Young kid", "8", "Nothing"],
+                question: "What is the last number printed?",
+                code: "for i in range(1, 6):\n    print(i)",
+                options: ["4", "5", "6", "1"],
                 correct: 1
             },
             {
-                question: "What is Flask used for?",
-                code: null,
-                options: ["Making games", "Making websites", "Making music", "Making pictures"],
+                question: "What will this code print?",
+                code: "total = 0\nfor i in range(4):\n    total = total + i\nprint(total)",
+                options: ["4", "6", "10", "0"],
                 correct: 1
             },
             {
-                question: "What does this code do?",
-                code: "total = 0\nfor i in range(3):\n    total = total + 1\nprint(total)",
-                options: ["Prints 0", "Prints 1", "Prints 3", "Prints 6"],
+                question: "How many times does this loop run?",
+                code: "for i in range(2, 8):\n    print(i)",
+                options: ["8 times", "7 times", "6 times", "5 times"],
                 correct: 2
             },
             {
-                question: "Which is correct to start a Flask app?",
-                code: null,
-                options: ["from flask import Flask", "import flask Flask", "flask = new Flask", "start Flask"],
+                question: "What will this code print?",
+                code: "for i in range(3):\n    print(i * 2)",
+                options: ["0 2 4", "2 4 6", "0 1 2", "1 2 3"],
                 correct: 0
+            },
+            {
+                question: "What does range(5) give you?",
+                code: null,
+                options: ["1, 2, 3, 4, 5", "0, 1, 2, 3, 4", "0, 1, 2, 3, 4, 5", "5, 4, 3, 2, 1"],
+                correct: 1
+            },
+            {
+                question: "What will this code print?",
+                code: "word = 'Hi'\nfor letter in word:\n    print(letter)",
+                options: ["Hi", "H i", "H then i (each on new line)", "Error"],
+                correct: 2
+            },
+            {
+                question: "What is the value of total after this code?",
+                code: "total = 0\nfor i in range(1, 4):\n    total = total + 1\nprint(total)",
+                options: ["4", "3", "0", "1"],
+                correct: 1
             },
             {
                 question: "What will this print?",
-                code: "num = 10\nif num == 10:\n    print('Yes!')\nelse:\n    print('No!')",
-                options: ["Yes!", "No!", "10", "Error"],
+                code: "for i in range(3):\n    print('*' * (i + 1))",
+                options: ["* ** ***", "*** ** *", "* * *", "1 2 3"],
+                correct: 0
+            },
+            {
+                question: "How many times does this loop run?",
+                code: "for i in range(0):\n    print('Hello')",
+                options: ["1 time", "Infinite times", "0 times", "Error"],
+                correct: 2
+            },
+            {
+                question: "What will this code print?",
+                code: "nums = [10, 20, 30]\nfor n in nums:\n    print(n)",
+                options: ["0 1 2", "10 20 30", "[10, 20, 30]", "Error"],
+                correct: 1
+            },
+            {
+                question: "What is the final value of x?",
+                code: "x = 1\nfor i in range(3):\n    x = x * 2\nprint(x)",
+                options: ["6", "8", "3", "2"],
+                correct: 1
+            },
+            {
+                question: "What will this code print?",
+                code: "for i in range(5):\n    if i == 3:\n        break\n    print(i)",
+                options: ["0 1 2 3", "0 1 2", "0 1 2 3 4", "3"],
+                correct: 1
+            },
+            {
+                question: "What will this code print?",
+                code: "for i in range(5):\n    if i == 2:\n        continue\n    print(i)",
+                options: ["0 1 3 4", "0 1 2 3 4", "2", "0 1"],
                 correct: 0
             }
         ];
 
-        const iqQuestions = [
+        const whileQuestions = [
             {
-                question: "What comes next: 2, 4, 6, 8, ?",
-                code: null,
-                options: ["9", "10", "11", "12"],
+                question: "What will this code print?",
+                code: "x = 0\nwhile x < 3:\n    print(x)\n    x = x + 1",
+                options: ["0 1 2", "0 1 2 3", "1 2 3", "1 2"],
+                correct: 0
+            },
+            {
+                question: "How many times will 'Hi' be printed?",
+                code: "count = 0\nwhile count < 4:\n    print('Hi')\n    count = count + 1",
+                options: ["3 times", "4 times", "5 times", "Infinite times"],
                 correct: 1
             },
             {
-                question: "If a program has a bug, what should you do?",
-                code: null,
-                options: ["Turn off the computer", "Find and fix the error", "Delete the program", "Wait for it to fix itself"],
-                correct: 1
-            },
-            {
-                question: "What comes next: A, C, E, G, ?",
-                code: null,
-                options: ["H", "I", "J", "K"],
-                correct: 1
-            },
-            {
-                question: "A loop runs 5 times. Each time it adds 2. What is the total added?",
-                code: null,
-                options: ["5", "7", "10", "2"],
+                question: "What happens if you forget to update the counter in a while loop?",
+                code: "x = 0\nwhile x < 5:\n    print(x)",
+                options: ["It prints 0 to 4", "It prints nothing", "It runs forever (infinite loop)", "It prints 5"],
                 correct: 2
             },
             {
-                question: "Which one is different from the others?",
-                code: null,
-                options: ["Python", "JavaScript", "HTML", "Java"],
-                correct: 2
-            },
-            {
-                question: "What comes next: 1, 1, 2, 3, 5, ?",
-                code: null,
-                options: ["6", "7", "8", "9"],
-                correct: 2
-            },
-            {
-                question: "If TRUE and FALSE are together, the result is:",
-                code: null,
-                options: ["TRUE", "FALSE", "MAYBE", "ERROR"],
+                question: "What is the value of x after this code?",
+                code: "x = 10\nwhile x > 5:\n    x = x - 2\nprint(x)",
+                options: ["5", "4", "6", "0"],
                 correct: 1
             },
             {
-                question: "A website has 3 pages. Each page has 4 buttons. How many buttons in total?",
-                code: null,
-                options: ["7", "12", "34", "1"],
+                question: "What will this code print?",
+                code: "n = 1\nwhile n <= 4:\n    print(n * 10)\n    n = n + 1",
+                options: ["1 2 3 4", "10 20 30 40", "10 20 30", "40 30 20 10"],
                 correct: 1
             },
             {
-                question: "What is the missing number: 3, 6, ?, 12, 15",
+                question: "How many times does this loop run?",
+                code: "x = 5\nwhile x > 0:\n    x = x - 1",
+                options: ["4 times", "5 times", "6 times", "0 times"],
+                correct: 1
+            },
+            {
+                question: "What is the main difference between 'for' and 'while' loops?",
                 code: null,
-                options: ["7", "8", "9", "10"],
+                options: [
+                    "for loops are faster",
+                    "while loops can only count numbers",
+                    "for loops run a set number of times, while loops run until a condition is false",
+                    "There is no difference"
+                ],
                 correct: 2
             },
             {
-                question: "A programmer writes 10 lines of code per hour. How many lines in 3 hours?",
-                code: null,
-                options: ["13", "30", "10", "33"],
+                question: "What will this code print?",
+                code: "total = 0\ni = 1\nwhile i <= 5:\n    total = total + i\n    i = i + 1\nprint(total)",
+                options: ["5", "10", "15", "20"],
+                correct: 2
+            },
+            {
+                question: "What will this code print?",
+                code: "x = 100\nwhile x > 1:\n    x = x // 2\nprint(x)",
+                options: ["0", "1", "2", "50"],
                 correct: 1
+            },
+            {
+                question: "How many times will this loop run?",
+                code: "x = 10\nwhile x < 10:\n    print(x)\n    x = x + 1",
+                options: ["10 times", "1 time", "0 times", "Infinite times"],
+                correct: 2
+            },
+            {
+                question: "What will this code print?",
+                code: "x = 1\nwhile x < 10:\n    x = x * 3\nprint(x)",
+                options: ["9", "27", "12", "3"],
+                correct: 1
+            },
+            {
+                question: "What will this code print?",
+                code: "count = 0\nwhile count < 5:\n    if count == 3:\n        break\n    count = count + 1\nprint(count)",
+                options: ["5", "4", "3", "0"],
+                correct: 2
+            },
+            {
+                question: "What is True about while True?",
+                code: "while True:\n    print('Running')\n    break",
+                options: [
+                    "It runs forever and never stops",
+                    "It runs once because of break",
+                    "It gives an error",
+                    "It never runs"
+                ],
+                correct: 1
+            },
+            {
+                question: "What will this code print?",
+                code: "x = 2\nresult = 1\nwhile x > 0:\n    result = result * x\n    x = x - 1\nprint(result)",
+                options: ["0", "1", "2", "4"],
+                correct: 2
+            },
+            {
+                question: "What will this code print?",
+                code: "num = 5\nwhile num > 0:\n    print(num)\n    num = num - 2",
+                options: ["5 3 1", "5 4 3 2 1", "5 3", "4 2 0"],
+                correct: 0
             }
         ];
 
+        const TOTAL_QUESTIONS = 30;
+        const FOR_COUNT = 15;
         let currentQuestion = 0;
         let selectedAnswer = null;
-        let pythonCorrect = 0;
-        let iqCorrect = 0;
+        let forCorrect = 0;
+        let whileCorrect = 0;
         let studentName = '';
         let userAnswers = [];
-        const allQuestions = [...pythonQuestions, ...iqQuestions];
+        const allQuestions = [...forQuestions, ...whileQuestions];
 
         function startQuiz() {
             const nameInput = document.getElementById('student-name');
@@ -578,16 +581,16 @@
 
         function showQuestion() {
             const question = allQuestions[currentQuestion];
-            const isPython = currentQuestion < 10;
+            const isFor = currentQuestion < FOR_COUNT;
 
             // Update progress
-            document.getElementById('progress-fill').style.width = `${((currentQuestion + 1) / 20) * 100}%`;
-            document.getElementById('question-counter').textContent = `Question ${currentQuestion + 1} of 20`;
+            document.getElementById('progress-fill').style.width = `${((currentQuestion + 1) / TOTAL_QUESTIONS) * 100}%`;
+            document.getElementById('question-counter').textContent = `Question ${currentQuestion + 1} of ${TOTAL_QUESTIONS}`;
 
             // Update section badge
             const badge = document.getElementById('section-badge');
-            badge.textContent = isPython ? 'Python' : 'IQ';
-            badge.className = isPython ? 'section-badge' : 'section-badge iq';
+            badge.textContent = isFor ? 'For Loop' : 'While Loop';
+            badge.className = isFor ? 'section-badge' : 'section-badge while-badge';
 
             // Show question
             document.getElementById('question-text').textContent = question.question;
@@ -623,24 +626,19 @@
         }
 
         function selectOption(index) {
-            // Remove previous selection
             document.querySelectorAll('.option').forEach(opt => opt.classList.remove('selected'));
-
-            // Add selection to clicked option
             document.querySelectorAll('.option')[index].classList.add('selected');
-
             selectedAnswer = index;
             document.getElementById('next-button').disabled = false;
         }
 
         function nextQuestion() {
-            // Check if answer is correct
             const question = allQuestions[currentQuestion];
             const isCorrect = selectedAnswer === question.correct;
 
-            // Store the answer
             userAnswers.push({
                 questionNum: currentQuestion + 1,
+                section: currentQuestion < FOR_COUNT ? 'For Loop' : 'While Loop',
                 question: question.question,
                 selected: question.options[selectedAnswer],
                 correct: question.options[question.correct],
@@ -648,16 +646,16 @@
             });
 
             if (isCorrect) {
-                if (currentQuestion < 10) {
-                    pythonCorrect++;
+                if (currentQuestion < FOR_COUNT) {
+                    forCorrect++;
                 } else {
-                    iqCorrect++;
+                    whileCorrect++;
                 }
             }
 
             currentQuestion++;
 
-            if (currentQuestion >= 20) {
+            if (currentQuestion >= TOTAL_QUESTIONS) {
                 showResults();
             } else {
                 showQuestion();
@@ -668,13 +666,9 @@
             document.getElementById('quiz-screen').classList.add('hidden');
             document.getElementById('results-screen').classList.remove('hidden');
 
-            const total = pythonCorrect + iqCorrect;
-            document.getElementById('total-score').textContent = total;
-            document.getElementById('python-score').textContent = `${pythonCorrect}/10`;
-            document.getElementById('iq-score').textContent = `${iqCorrect}/10`;
+            const total = forCorrect + whileCorrect;
             document.getElementById('student-result-name').textContent = `Well done, ${studentName}!`;
 
-            // Send results via email
             sendResultsEmail(total);
         }
 
@@ -682,27 +676,24 @@
             const statusEl = document.getElementById('email-status');
             statusEl.textContent = 'Submitting your answers...';
 
-            // Build answers detail
-            let answersDetail = `\n\n=== DETAILED ANSWERS ===\n`;
-            userAnswers.forEach((ans, i) => {
+            let answersDetail = `\n=== DETAILED ANSWERS ===\n`;
+            userAnswers.forEach((ans) => {
                 const status = ans.isCorrect ? 'CORRECT' : 'WRONG';
-                answersDetail += `\nQ${ans.questionNum}: ${ans.question}\n`;
+                answersDetail += `\nQ${ans.questionNum} [${ans.section}]: ${ans.question}\n`;
                 answersDetail += `Selected: ${ans.selected}\n`;
                 answersDetail += `Correct Answer: ${ans.correct}\n`;
                 answersDetail += `Result: ${status}\n`;
                 answersDetail += `---`;
             });
 
-            // Prepare form data
             const formData = new FormData();
             formData.append('Student Name', studentName);
-            formData.append('Total Score', `${total}/20`);
-            formData.append('Python Score', `${pythonCorrect}/10`);
-            formData.append('IQ Score', `${iqCorrect}/10`);
+            formData.append('Total Score', `${total}/${TOTAL_QUESTIONS}`);
+            formData.append('For Loop Score', `${forCorrect}/${FOR_COUNT}`);
+            formData.append('While Loop Score', `${whileCorrect}/${TOTAL_QUESTIONS - FOR_COUNT}`);
             formData.append('Answers Detail', answersDetail);
-            formData.append('_subject', `Quiz Result: ${studentName} scored ${total}/20`);
+            formData.append('_subject', `Quiz Result: ${studentName} scored ${total}/${TOTAL_QUESTIONS}`);
 
-            // Send via FormSubmit
             fetch('https://formsubmit.co/ajax/ibrahimfakhreyams@gmail.com', {
                 method: 'POST',
                 body: formData
@@ -721,8 +712,8 @@
         function restartQuiz() {
             currentQuestion = 0;
             selectedAnswer = null;
-            pythonCorrect = 0;
-            iqCorrect = 0;
+            forCorrect = 0;
+            whileCorrect = 0;
             studentName = '';
             userAnswers = [];
 
