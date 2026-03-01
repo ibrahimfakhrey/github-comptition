@@ -3,13 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GitHub Competition</title>
+    <title>GitHub Competition - IQ Challenge</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
@@ -19,6 +15,8 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            user-select: none;
+            -webkit-user-select: none;
         }
 
         .header {
@@ -31,697 +29,668 @@
             gap: 12px;
         }
 
-        .github-logo {
-            width: 32px;
-            height: 32px;
-            fill: #c9d1d9;
-        }
+        .github-logo { width: 32px; height: 32px; fill: #c9d1d9; }
 
-        .header h1 {
-            color: #f0f6fc;
-            font-size: 20px;
-            font-weight: 600;
-        }
-
-        .container {
-            max-width: 800px;
-            width: 100%;
-            padding: 32px;
-            flex: 1;
-        }
-
-        .progress-bar {
-            background-color: #21262d;
-            border-radius: 6px;
-            height: 8px;
-            margin-bottom: 24px;
-            overflow: hidden;
-        }
-
-        .progress-fill {
-            background: linear-gradient(90deg, #238636, #2ea043);
-            height: 100%;
-            transition: width 0.3s ease;
-        }
-
-        .question-info {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 16px;
-            font-size: 14px;
-            color: #8b949e;
-        }
-
-        .section-badge {
-            background-color: #238636;
-            color: #ffffff;
-            padding: 4px 12px;
+        .header h1 { color: #f0f6fc; font-size: 20px; font-weight: 600; }
+        .header .step-badge {
+            margin-left: auto;
+            background: linear-gradient(135deg, #238636, #1f6feb);
+            color: #fff;
+            padding: 4px 14px;
             border-radius: 20px;
             font-size: 12px;
-            font-weight: 600;
+            font-weight: 700;
+            letter-spacing: 0.5px;
         }
 
-        .section-badge.while-badge {
-            background-color: #1f6feb;
+        .container { max-width: 820px; width: 100%; padding: 32px; flex: 1; }
+
+        /* ── Warning Banner ── */
+        .warning-banner {
+            background: linear-gradient(135deg, #6e40001a, #f851491a);
+            border: 1px solid #f8514980;
+            border-radius: 8px;
+            padding: 16px 20px;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+        .warning-banner svg { flex-shrink: 0; margin-top: 2px; }
+        .warning-banner p { font-size: 13px; color: #f0f6fc; line-height: 1.5; }
+        .warning-banner strong { color: #f85149; }
+
+        /* ── Tab-switch overlay ── */
+        .cheat-overlay {
+            display: none;
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.92);
+            z-index: 9999;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 32px;
+        }
+        .cheat-overlay.active { display: flex; }
+        .cheat-overlay h2 { color: #f85149; font-size: 28px; margin-bottom: 16px; }
+        .cheat-overlay p { color: #c9d1d9; font-size: 16px; line-height: 1.6; max-width: 500px; }
+        .cheat-overlay .warn-count { color: #f0883e; font-size: 48px; font-weight: 800; margin: 16px 0; }
+        .cheat-overlay button {
+            margin-top: 24px; background: #238636; color: #fff; border: none;
+            padding: 12px 32px; border-radius: 6px; font-size: 15px; font-weight: 600; cursor: pointer;
         }
 
+        /* ── Progress ── */
+        .progress-bar { background-color: #21262d; border-radius: 6px; height: 8px; margin-bottom: 20px; overflow: hidden; }
+        .progress-fill { background: linear-gradient(90deg, #238636, #2ea043); height: 100%; transition: width 0.4s ease; }
+
+        .question-info { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; font-size: 14px; color: #8b949e; flex-wrap: wrap; gap: 8px; }
+        .badge { padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 700; color: #fff; text-transform: uppercase; letter-spacing: 0.5px; }
+        .badge-verbal { background: #8957e5; }
+        .badge-quant { background: #1f6feb; }
+        .badge-logic { background: #238636; }
+        .badge-pattern { background: #f0883e; }
+        .badge-spatial { background: #f47067; }
+        .badge-memory { background: #56d364; color: #0d1117; }
+
+        .timer-display { font-variant-numeric: tabular-nums; font-weight: 600; color: #f0f6fc; font-size: 15px; }
+        .timer-display.warning { color: #f85149; }
+
+        /* ── Question Card ── */
         .question-card {
             background-color: #161b22;
             border: 1px solid #30363d;
-            border-radius: 6px;
-            padding: 24px;
+            border-radius: 8px;
+            padding: 28px;
             margin-bottom: 24px;
         }
-
-        .question-text {
-            font-size: 18px;
-            color: #f0f6fc;
-            margin-bottom: 20px;
-            line-height: 1.5;
-        }
-
+        .question-text { font-size: 17px; color: #f0f6fc; margin-bottom: 20px; line-height: 1.6; }
         .code-block {
-            background-color: #0d1117;
-            border: 1px solid #30363d;
-            border-radius: 6px;
-            padding: 16px;
-            margin: 16px 0;
-            font-family: 'Consolas', 'Monaco', monospace;
-            font-size: 14px;
-            color: #79c0ff;
-            overflow-x: auto;
-            white-space: pre-wrap;
-            line-height: 1.6;
+            background-color: #0d1117; border: 1px solid #30363d; border-radius: 6px;
+            padding: 16px; margin: 16px 0; font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 14px; color: #79c0ff; white-space: pre-wrap; line-height: 1.6;
         }
-
-        .options {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
+        .pattern-grid {
+            display: inline-grid; gap: 4px; margin: 16px 0; padding: 16px;
+            background: #0d1117; border: 1px solid #30363d; border-radius: 6px;
         }
+        .pattern-cell {
+            width: 52px; height: 52px; display: flex; align-items: center; justify-content: center;
+            font-size: 22px; font-weight: 700; background: #161b22; border: 1px solid #30363d; border-radius: 4px; color: #f0f6fc;
+        }
+        .pattern-cell.highlight { background: #1f6feb33; border-color: #1f6feb; color: #58a6ff; }
 
+        /* ── Options ── */
+        .options { display: flex; flex-direction: column; gap: 10px; }
         .option {
-            background-color: #21262d;
-            border: 2px solid #30363d;
-            border-radius: 6px;
-            padding: 14px 16px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            display: flex;
-            align-items: center;
-            gap: 12px;
+            background-color: #21262d; border: 2px solid #30363d; border-radius: 6px;
+            padding: 14px 16px; cursor: pointer; transition: all 0.15s ease;
+            display: flex; align-items: center; gap: 12px;
         }
-
-        .option:hover {
-            border-color: #58a6ff;
-            background-color: #1c2128;
-        }
-
-        .option.selected {
-            border-color: #238636;
-            background-color: #1b4721;
-        }
-
+        .option:hover { border-color: #58a6ff; background-color: #1c2128; }
+        .option.selected { border-color: #238636; background-color: #1b4721; }
         .option-letter {
-            background-color: #30363d;
-            color: #c9d1d9;
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 600;
-            font-size: 14px;
-            flex-shrink: 0;
+            background-color: #30363d; color: #c9d1d9; width: 28px; height: 28px;
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-weight: 600; font-size: 13px; flex-shrink: 0;
         }
-
-        .option.selected .option-letter {
-            background-color: #238636;
-            color: #ffffff;
-        }
-
-        .option-text {
-            font-size: 15px;
-        }
+        .option.selected .option-letter { background-color: #238636; color: #fff; }
+        .option-text { font-size: 15px; line-height: 1.4; }
 
         .nav-button {
-            background-color: #238636;
-            color: #ffffff;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 6px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background-color 0.2s ease;
-            float: right;
+            background-color: #238636; color: #fff; border: none; padding: 12px 28px;
+            border-radius: 6px; font-size: 14px; font-weight: 600; cursor: pointer;
+            transition: background-color 0.2s ease; float: right;
         }
+        .nav-button:hover { background-color: #2ea043; }
+        .nav-button:disabled { background-color: #21262d; color: #484f58; cursor: not-allowed; }
 
-        .nav-button:hover {
-            background-color: #2ea043;
-        }
-
-        .nav-button:disabled {
-            background-color: #21262d;
-            color: #484f58;
-            cursor: not-allowed;
-        }
-
-        .results-container {
-            text-align: center;
-            padding: 48px;
-        }
-
-        .results-title {
-            font-size: 32px;
-            color: #f0f6fc;
-            margin-bottom: 24px;
-        }
-
-        .score-circle {
-            width: 180px;
-            height: 180px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #238636, #2ea043);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 32px;
-        }
-
-        .start-screen {
-            text-align: center;
-            padding: 64px 32px;
-        }
-
-        .start-title {
-            font-size: 36px;
-            color: #f0f6fc;
-            margin-bottom: 16px;
-        }
-
-        .start-description {
-            font-size: 16px;
-            color: #8b949e;
-            margin-bottom: 32px;
-            line-height: 1.6;
-        }
-
-        .start-button {
-            background-color: #238636;
-            color: #ffffff;
-            border: none;
-            padding: 16px 48px;
-            border-radius: 6px;
-            font-size: 18px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background-color 0.2s ease;
-        }
-
-        .start-button:hover {
-            background-color: #2ea043;
-        }
-
-        .name-input-container {
-            margin-bottom: 24px;
-        }
-
-        .name-label {
-            display: block;
-            font-size: 16px;
-            color: #c9d1d9;
-            margin-bottom: 8px;
-        }
-
-        .name-input {
-            background-color: #21262d;
-            border: 1px solid #30363d;
-            border-radius: 6px;
-            padding: 12px 16px;
-            font-size: 16px;
-            color: #f0f6fc;
-            width: 100%;
-            max-width: 300px;
-            outline: none;
+        /* ── Start Screen ── */
+        .start-screen { text-align: center; padding: 48px 24px; }
+        .start-title { font-size: 32px; color: #f0f6fc; margin-bottom: 8px; }
+        .start-subtitle { font-size: 15px; color: #58a6ff; margin-bottom: 28px; font-weight: 600; }
+        .start-description { font-size: 15px; color: #8b949e; margin-bottom: 32px; line-height: 1.7; text-align: left; max-width: 560px; margin-left: auto; margin-right: auto; }
+        .start-description li { margin-bottom: 6px; }
+        .input-group { margin-bottom: 20px; text-align: left; max-width: 360px; margin-left: auto; margin-right: auto; }
+        .input-label { display: block; font-size: 14px; color: #c9d1d9; margin-bottom: 6px; font-weight: 600; }
+        .input-field {
+            background-color: #21262d; border: 1px solid #30363d; border-radius: 6px;
+            padding: 11px 14px; font-size: 15px; color: #f0f6fc; width: 100%; outline: none;
             transition: border-color 0.2s ease;
         }
-
-        .name-input:focus {
-            border-color: #58a6ff;
+        .input-field:focus { border-color: #58a6ff; }
+        .input-field::placeholder { color: #484f58; }
+        select.input-field { cursor: pointer; appearance: none; -webkit-appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%238b949e' viewBox='0 0 16 16'%3E%3Cpath d='M4.427 7.427l3.396 3.396a.25.25 0 00.354 0l3.396-3.396A.25.25 0 0011.396 7H4.604a.25.25 0 00-.177.427z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat; background-position: right 12px center;
         }
+        select.input-field option { background: #21262d; color: #f0f6fc; }
+        .input-error { border-color: #f85149 !important; }
 
-        .name-input::placeholder {
-            color: #6e7681;
+        .start-button {
+            background: linear-gradient(135deg, #238636, #2ea043); color: #fff; border: none;
+            padding: 14px 48px; border-radius: 6px; font-size: 16px; font-weight: 700;
+            cursor: pointer; transition: opacity 0.2s ease; margin-top: 8px;
         }
+        .start-button:hover { opacity: 0.9; }
 
-        .sending-message {
-            color: #58a6ff;
-            font-size: 16px;
-            margin-top: 16px;
+        /* ── Results ── */
+        .results-container { text-align: center; padding: 48px 24px; }
+        .results-title { font-size: 30px; color: #f0f6fc; margin-bottom: 8px; }
+        .results-name { font-size: 18px; color: #58a6ff; margin-bottom: 32px; }
+        .result-icon {
+            width: 120px; height: 120px; border-radius: 50%;
+            background: linear-gradient(135deg, #238636, #1f6feb);
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 28px;
         }
+        .result-card {
+            background: #161b22; border: 1px solid #30363d; border-radius: 8px;
+            padding: 24px; max-width: 480px; margin: 0 auto 24px; text-align: left;
+        }
+        .result-card h3 { color: #f0f6fc; font-size: 16px; margin-bottom: 12px; }
+        .result-card p { color: #8b949e; font-size: 14px; line-height: 1.7; }
+        .result-card .highlight-text { color: #58a6ff; font-weight: 600; }
 
-        .hidden {
-            display: none !important;
+        .sending-message { color: #58a6ff; font-size: 15px; margin-top: 16px; }
+
+        .hidden { display: none !important; }
+
+        @media (max-width: 600px) {
+            .container { padding: 16px; }
+            .question-card { padding: 20px 16px; }
+            .start-title { font-size: 24px; }
+            .pattern-cell { width: 40px; height: 40px; font-size: 17px; }
         }
     </style>
 </head>
 <body>
+
+    <!-- Tab-switch cheat overlay -->
+    <div class="cheat-overlay" id="cheat-overlay">
+        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#f85149" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+        <h2>Tab Switch Detected!</h2>
+        <div class="warn-count" id="warn-count">1</div>
+        <p>You left this tab. This has been <strong>recorded and will be sent to your teacher</strong>. You are allowed <strong>3 warnings</strong> before auto-submission.</p>
+        <button onclick="dismissCheatOverlay()">Return to Test</button>
+    </div>
+
     <header class="header">
-        <svg class="github-logo" viewBox="0 0 16 16">
-            <path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path>
-        </svg>
+        <svg class="github-logo" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path></svg>
         <h1>GitHub Competition</h1>
+        <span class="step-badge">STEP 1 — IQ CHALLENGE</span>
     </header>
 
     <div class="container">
-        <!-- Start Screen -->
+
+        <!-- ════════ START SCREEN ════════ -->
         <div id="start-screen" class="start-screen">
-            <h2 class="start-title">Welcome to the Quiz!</h2>
-            <p class="start-description">
-                This quiz has 30 questions:<br>
-                15 Python <strong>For Loop</strong> Questions<br>
-                15 Python <strong>While Loop</strong> Questions<br><br>
-                Difficulty: Easy to Medium<br>
-                You cannot go back to previous questions.<br>
-                Good luck!
-            </p>
-            <div class="name-input-container">
-                <label for="student-name" class="name-label">Enter Your Name:</label>
-                <input type="text" id="student-name" class="name-input" placeholder="Your name here..." required>
+            <h2 class="start-title">IQ Challenge Test</h2>
+            <p class="start-subtitle">GitHub Competition — Step 1</p>
+
+            <div class="start-description">
+                <ul>
+                    <li>This is the <strong style="color:#f0f6fc;">first step</strong> of the GitHub Competition.</li>
+                    <li>The test adapts to your grade level (Grades 5–12).</li>
+                    <li>Questions cover: <strong style="color:#8957e5;">Verbal</strong>, <strong style="color:#1f6feb;">Quantitative</strong>, <strong style="color:#238636;">Logical</strong>, and <strong style="color:#f0883e;">Pattern</strong> reasoning.</li>
+                    <li>Each question has a <strong style="color:#f0f6fc;">time limit</strong> — unanswered questions count as wrong.</li>
+                    <li>Your result is sent directly to your teacher — <strong style="color:#f85149;">no score is shown to you</strong>.</li>
+                    <li style="color:#f85149;">Do <strong>NOT</strong> switch tabs or attempt to cheat. All activity is monitored and recorded.</li>
+                </ul>
             </div>
-            <button class="start-button" onclick="startQuiz()">Start Quiz</button>
+
+            <div class="input-group">
+                <label class="input-label" for="student-name">Full Name</label>
+                <input type="text" id="student-name" class="input-field" placeholder="Enter your full name" autocomplete="off">
+            </div>
+            <div class="input-group">
+                <label class="input-label" for="student-grade">Grade</label>
+                <select id="student-grade" class="input-field">
+                    <option value="" disabled selected>Select your grade</option>
+                    <option value="5">Grade 5</option>
+                    <option value="6">Grade 6</option>
+                    <option value="7">Grade 7</option>
+                    <option value="8">Grade 8</option>
+                    <option value="9">Grade 9</option>
+                    <option value="10">Grade 10</option>
+                    <option value="11">Grade 11</option>
+                    <option value="12">Grade 12</option>
+                </select>
+            </div>
+
+            <button class="start-button" onclick="startQuiz()">Begin Test</button>
         </div>
 
-        <!-- Quiz Screen -->
+        <!-- ════════ QUIZ SCREEN ════════ -->
         <div id="quiz-screen" class="hidden">
-            <div class="progress-bar">
-                <div class="progress-fill" id="progress-fill"></div>
+            <div class="warning-banner">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f85149" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                <p><strong>Warning:</strong> Do not leave this tab, open new tabs, or attempt to inspect/hack this page. All violations are <strong>recorded and sent to your teacher</strong>. There is absolutely no need to cheat — just do your best!</p>
             </div>
 
+            <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+
             <div class="question-info">
-                <span id="question-counter">Question 1 of 30</span>
-                <span class="section-badge" id="section-badge">For Loop</span>
+                <span id="question-counter">Question 1 of 20</span>
+                <span class="badge" id="category-badge">Verbal</span>
+                <span class="timer-display" id="timer-display">01:00</span>
             </div>
 
             <div class="question-card">
                 <p class="question-text" id="question-text"></p>
                 <div class="code-block hidden" id="code-block"></div>
+                <div id="pattern-container"></div>
                 <div class="options" id="options"></div>
             </div>
 
-            <button class="nav-button" id="next-button" disabled onclick="nextQuestion()">Next Question</button>
+            <button class="nav-button" id="next-button" disabled onclick="nextQuestion()">Next</button>
         </div>
 
-        <!-- Results Screen -->
+        <!-- ════════ RESULTS SCREEN ════════ -->
         <div id="results-screen" class="results-container hidden">
-            <h2 class="results-title">Quiz Complete!</h2>
-            <p id="student-result-name" style="font-size: 20px; color: #f0f6fc; margin-bottom: 24px;"></p>
-            <div class="score-circle">
-                <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2">
-                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
-                </svg>
+            <div class="result-icon">
+                <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
             </div>
-            <p style="font-size: 18px; color: #8b949e; margin-bottom: 16px; line-height: 1.6;">
-                Thank you for completing the quiz!
-            </p>
-            <p style="font-size: 16px; color: #c9d1d9; margin-bottom: 24px; line-height: 1.6;">
-                Your mark is with the confirmed academic teacher<br>for <strong style="color: #58a6ff;">AMS School</strong>
-            </p>
+            <h2 class="results-title">Test Completed!</h2>
+            <p class="results-name" id="results-name"></p>
+
+            <div class="result-card">
+                <h3>What happens next?</h3>
+                <p>Your answers have been <span class="highlight-text">submitted and sent to your teacher</span> at AMS School. Your score is confidential and will only be shared by your academic teacher.</p>
+                <br>
+                <p>This was <span class="highlight-text">Step 1</span> of the GitHub Competition. Stay tuned for further steps!</p>
+            </div>
+
             <p id="email-status" class="sending-message"></p>
         </div>
     </div>
 
-    <script>
-        const forQuestions = [
-            {
-                question: "How many times will 'Hello' be printed?",
-                code: "for i in range(5):\n    print('Hello')",
-                options: ["4 times", "5 times", "6 times", "1 time"],
-                correct: 1
-            },
-            {
-                question: "What will this code print?",
-                code: "for i in range(3):\n    print(i)",
-                options: ["1 2 3", "0 1 2", "0 1 2 3", "1 2"],
-                correct: 1
-            },
-            {
-                question: "What is the last number printed?",
-                code: "for i in range(1, 6):\n    print(i)",
-                options: ["4", "5", "6", "1"],
-                correct: 1
-            },
-            {
-                question: "What will this code print?",
-                code: "total = 0\nfor i in range(4):\n    total = total + i\nprint(total)",
-                options: ["4", "6", "10", "0"],
-                correct: 1
-            },
-            {
-                question: "How many times does this loop run?",
-                code: "for i in range(2, 8):\n    print(i)",
-                options: ["8 times", "7 times", "6 times", "5 times"],
-                correct: 2
-            },
-            {
-                question: "What will this code print?",
-                code: "for i in range(3):\n    print(i * 2)",
-                options: ["0 2 4", "2 4 6", "0 1 2", "1 2 3"],
-                correct: 0
-            },
-            {
-                question: "What does range(5) give you?",
-                code: null,
-                options: ["1, 2, 3, 4, 5", "0, 1, 2, 3, 4", "0, 1, 2, 3, 4, 5", "5, 4, 3, 2, 1"],
-                correct: 1
-            },
-            {
-                question: "What will this code print?",
-                code: "word = 'Hi'\nfor letter in word:\n    print(letter)",
-                options: ["Hi", "H i", "H then i (each on new line)", "Error"],
-                correct: 2
-            },
-            {
-                question: "What is the value of total after this code?",
-                code: "total = 0\nfor i in range(1, 4):\n    total = total + 1\nprint(total)",
-                options: ["4", "3", "0", "1"],
-                correct: 1
-            },
-            {
-                question: "What will this print?",
-                code: "for i in range(3):\n    print('*' * (i + 1))",
-                options: ["* ** ***", "*** ** *", "* * *", "1 2 3"],
-                correct: 0
-            },
-            {
-                question: "How many times does this loop run?",
-                code: "for i in range(0):\n    print('Hello')",
-                options: ["1 time", "Infinite times", "0 times", "Error"],
-                correct: 2
-            },
-            {
-                question: "What will this code print?",
-                code: "nums = [10, 20, 30]\nfor n in nums:\n    print(n)",
-                options: ["0 1 2", "10 20 30", "[10, 20, 30]", "Error"],
-                correct: 1
-            },
-            {
-                question: "What is the final value of x?",
-                code: "x = 1\nfor i in range(3):\n    x = x * 2\nprint(x)",
-                options: ["6", "8", "3", "2"],
-                correct: 1
-            },
-            {
-                question: "What will this code print?",
-                code: "for i in range(5):\n    if i == 3:\n        break\n    print(i)",
-                options: ["0 1 2 3", "0 1 2", "0 1 2 3 4", "3"],
-                correct: 1
-            },
-            {
-                question: "What will this code print?",
-                code: "for i in range(5):\n    if i == 2:\n        continue\n    print(i)",
-                options: ["0 1 3 4", "0 1 2 3 4", "2", "0 1"],
-                correct: 0
-            }
-        ];
+<script>
+// ══════════════════════════════════════════════
+//  QUESTION BANKS — by grade group
+// ══════════════════════════════════════════════
 
-        const whileQuestions = [
-            {
-                question: "What will this code print?",
-                code: "x = 0\nwhile x < 3:\n    print(x)\n    x = x + 1",
-                options: ["0 1 2", "0 1 2 3", "1 2 3", "1 2"],
-                correct: 0
-            },
-            {
-                question: "How many times will 'Hi' be printed?",
-                code: "count = 0\nwhile count < 4:\n    print('Hi')\n    count = count + 1",
-                options: ["3 times", "4 times", "5 times", "Infinite times"],
-                correct: 1
-            },
-            {
-                question: "What happens if you forget to update the counter in a while loop?",
-                code: "x = 0\nwhile x < 5:\n    print(x)",
-                options: ["It prints 0 to 4", "It prints nothing", "It runs forever (infinite loop)", "It prints 5"],
-                correct: 2
-            },
-            {
-                question: "What is the value of x after this code?",
-                code: "x = 10\nwhile x > 5:\n    x = x - 2\nprint(x)",
-                options: ["5", "4", "6", "0"],
-                correct: 1
-            },
-            {
-                question: "What will this code print?",
-                code: "n = 1\nwhile n <= 4:\n    print(n * 10)\n    n = n + 1",
-                options: ["1 2 3 4", "10 20 30 40", "10 20 30", "40 30 20 10"],
-                correct: 1
-            },
-            {
-                question: "How many times does this loop run?",
-                code: "x = 5\nwhile x > 0:\n    x = x - 1",
-                options: ["4 times", "5 times", "6 times", "0 times"],
-                correct: 1
-            },
-            {
-                question: "What is the main difference between 'for' and 'while' loops?",
-                code: null,
-                options: [
-                    "for loops are faster",
-                    "while loops can only count numbers",
-                    "for loops run a set number of times, while loops run until a condition is false",
-                    "There is no difference"
-                ],
-                correct: 2
-            },
-            {
-                question: "What will this code print?",
-                code: "total = 0\ni = 1\nwhile i <= 5:\n    total = total + i\n    i = i + 1\nprint(total)",
-                options: ["5", "10", "15", "20"],
-                correct: 2
-            },
-            {
-                question: "What will this code print?",
-                code: "x = 100\nwhile x > 1:\n    x = x // 2\nprint(x)",
-                options: ["0", "1", "2", "50"],
-                correct: 1
-            },
-            {
-                question: "How many times will this loop run?",
-                code: "x = 10\nwhile x < 10:\n    print(x)\n    x = x + 1",
-                options: ["10 times", "1 time", "0 times", "Infinite times"],
-                correct: 2
-            },
-            {
-                question: "What will this code print?",
-                code: "x = 1\nwhile x < 10:\n    x = x * 3\nprint(x)",
-                options: ["9", "27", "12", "3"],
-                correct: 1
-            },
-            {
-                question: "What will this code print?",
-                code: "count = 0\nwhile count < 5:\n    if count == 3:\n        break\n    count = count + 1\nprint(count)",
-                options: ["5", "4", "3", "0"],
-                correct: 2
-            },
-            {
-                question: "What is True about while True?",
-                code: "while True:\n    print('Running')\n    break",
-                options: [
-                    "It runs forever and never stops",
-                    "It runs once because of break",
-                    "It gives an error",
-                    "It never runs"
-                ],
-                correct: 1
-            },
-            {
-                question: "What will this code print?",
-                code: "x = 2\nresult = 1\nwhile x > 0:\n    result = result * x\n    x = x - 1\nprint(result)",
-                options: ["0", "1", "2", "4"],
-                correct: 2
-            },
-            {
-                question: "What will this code print?",
-                code: "num = 5\nwhile num > 0:\n    print(num)\n    num = num - 2",
-                options: ["5 3 1", "5 4 3 2 1", "5 3", "4 2 0"],
-                correct: 0
-            }
-        ];
+const questionBank = {
 
-        const TOTAL_QUESTIONS = 30;
-        const FOR_COUNT = 15;
-        let currentQuestion = 0;
-        let selectedAnswer = null;
-        let forCorrect = 0;
-        let whileCorrect = 0;
-        let studentName = '';
-        let userAnswers = [];
-        const allQuestions = [...forQuestions, ...whileQuestions];
+// ─── GRADES 5-6 ───
+"5-6": [
+    // VERBAL
+    { cat:"verbal", q:"Which word is the opposite of 'ancient'?", opts:["Old","Modern","Broken","Heavy"], ans:1, time:45 },
+    { cat:"verbal", q:"Complete the analogy: Book is to Reading as Fork is to ___", opts:["Writing","Eating","Cooking","Drawing"], ans:1, time:45 },
+    { cat:"verbal", q:"Which word does NOT belong in the group?", code:"Apple, Banana, Carrot, Grape", opts:["Apple","Banana","Carrot","Grape"], ans:2, time:40 },
+    { cat:"verbal", q:"Complete the analogy: Puppy is to Dog as Kitten is to ___", opts:["Pet","Cat","Mouse","Baby"], ans:1, time:40 },
+    { cat:"verbal", q:"What is the meaning of the word 'enormous'?", opts:["Very small","Very fast","Very large","Very old"], ans:2, time:40 },
 
-        function startQuiz() {
-            const nameInput = document.getElementById('student-name');
-            const name = nameInput.value.trim();
+    // QUANTITATIVE
+    { cat:"quant", q:"What comes next in the sequence?", code:"2, 4, 8, 16, ___", opts:["18","24","32","20"], ans:2, time:45 },
+    { cat:"quant", q:"If 3 pencils cost 12 coins, how much do 5 pencils cost?", opts:["15 coins","18 coins","20 coins","25 coins"], ans:2, time:50 },
+    { cat:"quant", q:"What comes next in the sequence?", code:"5, 10, 15, 20, ___", opts:["22","30","25","35"], ans:2, time:40 },
+    { cat:"quant", q:"A number multiplied by itself gives 49. What is the number?", opts:["6","8","7","9"], ans:2, time:45 },
+    { cat:"quant", q:"What comes next?", code:"1, 1, 2, 3, 5, 8, ___", opts:["10","11","13","15"], ans:2, time:50 },
 
-            if (!name) {
-                nameInput.style.borderColor = '#f85149';
-                nameInput.placeholder = 'Please enter your name!';
-                return;
-            }
+    // LOGICAL
+    { cat:"logic", q:"All roses are flowers. Some flowers fade quickly. Which statement MUST be true?", opts:["All roses fade quickly","Some roses fade quickly","Roses are not flowers","None of the above must be true"], ans:3, time:55 },
+    { cat:"logic", q:"If it is raining, the ground is wet. The ground is wet. What can we conclude?", opts:["It is definitely raining","It might be raining","It is not raining","The sun is out"], ans:1, time:50 },
+    { cat:"logic", q:"Tom is taller than Sam. Sam is taller than Alex. Who is the shortest?", opts:["Tom","Sam","Alex","Cannot tell"], ans:2, time:40 },
+    { cat:"logic", q:"Monday comes before Tuesday. Wednesday comes after Tuesday. Which day is in the middle?", opts:["Monday","Tuesday","Wednesday","Thursday"], ans:1, time:35 },
+    { cat:"logic", q:"If all Bloops are Razzies and all Razzies are Lazzies, then all Bloops are definitely:", opts:["Razzies only","Lazzies only","Both Razzies and Lazzies","None of the above"], ans:2, time:50 },
 
-            studentName = name;
-            userAnswers = [];
-            document.getElementById('start-screen').classList.add('hidden');
-            document.getElementById('quiz-screen').classList.remove('hidden');
-            showQuestion();
+    // PATTERN
+    { cat:"pattern", q:"Find the missing number in the grid:", grid:{cols:3,rows:3,cells:["2","4","6","8","10","12","14","16","?"]}, opts:["17","18","20","22"], ans:1, time:50 },
+    { cat:"pattern", q:"Find the missing number:", grid:{cols:3,rows:3,cells:["1","2","3","4","5","6","7","8","?"]}, opts:["9","10","11","12"], ans:0, time:35 },
+    { cat:"pattern", q:"Each row adds up to the same total. Find the missing number:", grid:{cols:3,rows:3,cells:["3","6","9","5","4","9","7","2","?"]}, opts:["7","8","9","10"], ans:2, time:55 },
+    { cat:"pattern", q:"What number replaces the question mark?", grid:{cols:3,rows:2,cells:["10","20","30","5","10","?"]}, opts:["15","20","25","35"], ans:0, time:45 },
+    { cat:"pattern", q:"Find the pattern and the missing number:", grid:{cols:4,rows:2,cells:["1","3","5","7","2","6","10","?"]}, opts:["12","14","16","18"], ans:1, time:55 },
+],
+
+// ─── GRADES 7-9 ───
+"7-9": [
+    // VERBAL
+    { cat:"verbal", q:"Which word is most similar in meaning to 'meticulous'?", opts:["Careless","Thorough","Quick","Simple"], ans:1, time:40 },
+    { cat:"verbal", q:"Complete the analogy: Pen is to Writer as Scalpel is to ___", opts:["Teacher","Surgeon","Butcher","Artist"], ans:1, time:40 },
+    { cat:"verbal", q:"Which word does NOT belong?", code:"Whisper, Shout, Speak, Listen", opts:["Whisper","Shout","Speak","Listen"], ans:3, time:40 },
+    { cat:"verbal", q:"Complete: Democracy is to Government as Biology is to ___", opts:["Life","Science","Chemistry","School"], ans:1, time:45 },
+    { cat:"verbal", q:"What does 'ambiguous' mean?", opts:["Clear and obvious","Having multiple meanings","Very old","Extremely large"], ans:1, time:40 },
+
+    // QUANTITATIVE
+    { cat:"quant", q:"What comes next in the sequence?", code:"3, 6, 12, 24, 48, ___", opts:["72","84","96","60"], ans:2, time:45 },
+    { cat:"quant", q:"If [3 → 9], [5 → 25], [7 → ?]", opts:["35","42","49","56"], ans:2, time:45 },
+    { cat:"quant", q:"What comes next?", code:"1, 4, 9, 16, 25, ___", opts:["30","36","42","49"], ans:1, time:45 },
+    { cat:"quant", q:"A shirt costs $40 after a 20% discount. What was the original price?", opts:["$45","$48","$50","$52"], ans:2, time:55 },
+    { cat:"quant", q:"What number is missing?", code:"2, 6, 18, 54, ___", opts:["108","162","72","216"], ans:1, time:45 },
+
+    // LOGICAL
+    { cat:"logic", q:"All A are B. No B are C. Which MUST be true?", opts:["All A are C","No A are C","Some A are C","Some C are A"], ans:1, time:55 },
+    { cat:"logic", q:"Five people are in a race. Ali finishes before Omar. Sara finishes after Noor but before Ali. Noor finishes first. Who is fourth?", opts:["Ali","Omar","Sara","Cannot tell"], ans:1, time:65 },
+    { cat:"logic", q:"If no heroes are cowards, and some soldiers are heroes, then:", opts:["All soldiers are cowards","Some soldiers are not cowards","No soldiers are cowards","All heroes are soldiers"], ans:1, time:55 },
+    { cat:"logic", q:"A is the father of B. B is the sister of C. D is the mother of C. What is A to D?", opts:["Brother","Father","Son","Husband"], ans:3, time:60 },
+    { cat:"logic", q:"If you rearrange 'CIFAIPC', you get the name of a(n):", opts:["Country","Ocean","Animal","City"], ans:1, time:50 },
+
+    // PATTERN
+    { cat:"pattern", q:"Find the missing number in the pattern:", grid:{cols:3,rows:3,cells:["2","6","18","3","9","27","4","12","?"]}, opts:["30","36","48","24"], ans:1, time:55 },
+    { cat:"pattern", q:"Each row follows the same rule. Find the missing number:", grid:{cols:3,rows:3,cells:["5","7","12","3","8","11","9","4","?"]}, opts:["11","12","13","14"], ans:2, time:55 },
+    { cat:"pattern", q:"What replaces the question mark?", grid:{cols:3,rows:3,cells:["1","4","9","16","25","36","49","64","?"]}, opts:["72","81","100","91"], ans:1, time:45 },
+    { cat:"pattern", q:"Find the missing number:", grid:{cols:4,rows:2,cells:["2","3","5","8","4","9","25","?"]}, opts:["49","56","64","81"], ans:2, time:60 },
+    { cat:"pattern", q:"What replaces the question mark?", grid:{cols:3,rows:3,cells:["6","1","8","7","5","3","2","9","?"]}, opts:["4","6","7","10"], ans:0, time:60 },
+],
+
+// ─── GRADES 10-12 ───
+"10-12": [
+    // VERBAL
+    { cat:"verbal", q:"Which word is most nearly opposite in meaning to 'ephemeral'?", opts:["Temporary","Eternal","Brief","Fragile"], ans:1, time:40 },
+    { cat:"verbal", q:"Complete: Architect is to Blueprint as Composer is to ___", opts:["Music","Score","Orchestra","Melody"], ans:1, time:40 },
+    { cat:"verbal", q:"CACOPHONY is to SOUND as PANDEMONIUM is to ___", opts:["Silence","Order","Chaos","Music"], ans:2, time:45 },
+    { cat:"verbal", q:"Which word does NOT belong?", code:"Metaphor, Simile, Hyperbole, Hypothesis", opts:["Metaphor","Simile","Hyperbole","Hypothesis"], ans:3, time:40 },
+    { cat:"verbal", q:"What is the meaning of 'ubiquitous'?", opts:["Rarely seen","Found everywhere","Extremely useful","Very unique"], ans:1, time:40 },
+
+    // QUANTITATIVE
+    { cat:"quant", q:"What comes next?", code:"1, 1, 2, 3, 5, 8, 13, 21, ___", opts:["29","32","34","26"], ans:2, time:40 },
+    { cat:"quant", q:"If f(x) = 2x + 3, what is f(f(2))?", opts:["10","17","13","21"], ans:1, time:55 },
+    { cat:"quant", q:"What is the next number?", code:"1, 8, 27, 64, 125, ___", opts:["196","216","256","343"], ans:1, time:50 },
+    { cat:"quant", q:"A clock shows 3:15. What is the angle between the hour and minute hands?", opts:["0°","7.5°","15°","22.5°"], ans:1, time:60 },
+    { cat:"quant", q:"What comes next?", code:"2, 3, 5, 7, 11, 13, ___", opts:["15","17","19","21"], ans:1, time:45 },
+
+    // LOGICAL
+    { cat:"logic", q:"If some Xs are Ys, and all Ys are Zs, which MUST be true?", opts:["All Xs are Zs","Some Xs are Zs","No Xs are Zs","All Zs are Xs"], ans:1, time:55 },
+    { cat:"logic", q:"Six people sit in a row. A is not at either end. B is to the immediate right of A. C is at the left end. Who could be to A's immediate left?", opts:["Only C","B or C","Anyone except B","Anyone except C and B"], ans:3, time:70 },
+    { cat:"logic", q:"Statement: 'If it rains, the match is cancelled.' The match was NOT cancelled. What can we conclude?", opts:["It rained","It did not rain","The match was played indoors","Nothing can be concluded"], ans:1, time:50 },
+    { cat:"logic", q:"All philosophers are thinkers. Some thinkers are writers. Which is valid?", opts:["All philosophers are writers","Some philosophers may be writers","No philosophers are writers","All writers are philosophers"], ans:1, time:55 },
+    { cat:"logic", q:"If APPLE = 50 and BANANA = 42, then CHERRY = ?", code:"(A=1, B=2, C=3 ... Z=26, sum the letters)", opts:["58","62","70","68"], ans:2, time:75 },
+
+    // PATTERN
+    { cat:"pattern", q:"Find the missing number:", grid:{cols:3,rows:3,cells:["8","1","6","3","5","7","4","9","?"]}, opts:["0","2","10","11"], ans:1, time:55 },
+    { cat:"pattern", q:"What replaces the question mark?", grid:{cols:3,rows:3,cells:["2","12","72","3","18","108","4","24","?"]}, opts:["120","132","144","96"], ans:2, time:60 },
+    { cat:"pattern", q:"Find the missing value:", grid:{cols:4,rows:3,cells:["A","C","E","G","B","D","F","H","C","E","G","?"]}, opts:["H","I","J","K"], ans:1, time:50 },
+    { cat:"pattern", q:"What replaces the question mark?", grid:{cols:3,rows:3,cells:["64","32","16","27","9","3","125","25","?"]}, opts:["1","5","10","15"], ans:1, time:65 },
+    { cat:"pattern", q:"Complete the matrix:", grid:{cols:3,rows:3,cells:["1","2","3","2","4","6","3","6","?"]}, opts:["8","9","12","15"], ans:1, time:50 },
+],
+};
+
+// ══════════════════════════════════════════════
+//  STATE
+// ══════════════════════════════════════════════
+let studentName = '';
+let studentGrade = '';
+let gradeGroup = '';
+let questions = [];
+let currentQ = 0;
+let selectedAnswer = null;
+let userAnswers = [];
+let timerInterval = null;
+let timeLeft = 0;
+let tabSwitchCount = 0;
+const MAX_WARNINGS = 3;
+let quizStartTime = null;
+let quizActive = false;
+
+// ══════════════════════════════════════════════
+//  ANTI-CHEAT
+// ══════════════════════════════════════════════
+document.addEventListener('contextmenu', e => { if (quizActive) e.preventDefault(); });
+document.addEventListener('keydown', e => {
+    if (!quizActive) return;
+    if ((e.ctrlKey || e.metaKey) && ['u','s','c','i','j'].includes(e.key.toLowerCase())) e.preventDefault();
+    if (e.key === 'F12') e.preventDefault();
+});
+
+document.addEventListener('visibilitychange', () => {
+    if (!quizActive) return;
+    if (document.hidden) {
+        tabSwitchCount++;
+        document.getElementById('warn-count').textContent = tabSwitchCount;
+        document.getElementById('cheat-overlay').classList.add('active');
+        if (tabSwitchCount >= MAX_WARNINGS) {
+            dismissCheatOverlay();
+            autoSubmit();
         }
+    }
+});
 
-        function showQuestion() {
-            const question = allQuestions[currentQuestion];
-            const isFor = currentQuestion < FOR_COUNT;
+function dismissCheatOverlay() {
+    document.getElementById('cheat-overlay').classList.remove('active');
+}
 
-            // Update progress
-            document.getElementById('progress-fill').style.width = `${((currentQuestion + 1) / TOTAL_QUESTIONS) * 100}%`;
-            document.getElementById('question-counter').textContent = `Question ${currentQuestion + 1} of ${TOTAL_QUESTIONS}`;
+function autoSubmit() {
+    // fill remaining as unanswered
+    while (currentQ < questions.length) {
+        userAnswers.push({ questionNum: currentQ+1, cat: questions[currentQ].cat, question: questions[currentQ].q, selected:'(No answer — auto-submitted)', correct: questions[currentQ].opts[questions[currentQ].ans], isCorrect: false });
+        currentQ++;
+    }
+    showResults();
+}
 
-            // Update section badge
-            const badge = document.getElementById('section-badge');
-            badge.textContent = isFor ? 'For Loop' : 'While Loop';
-            badge.className = isFor ? 'section-badge' : 'section-badge while-badge';
+// ══════════════════════════════════════════════
+//  QUIZ FLOW
+// ══════════════════════════════════════════════
+function getGradeGroup(g) {
+    g = parseInt(g);
+    if (g <= 6) return "5-6";
+    if (g <= 9) return "7-9";
+    return "10-12";
+}
 
-            // Show question
-            document.getElementById('question-text').textContent = question.question;
+function shuffleArray(arr) {
+    const a = [...arr];
+    for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i+1)); [a[i],a[j]] = [a[j],a[i]]; }
+    return a;
+}
 
-            // Show/hide code block
-            const codeBlock = document.getElementById('code-block');
-            if (question.code) {
-                codeBlock.textContent = question.code;
-                codeBlock.classList.remove('hidden');
-            } else {
-                codeBlock.classList.add('hidden');
-            }
+function startQuiz() {
+    const nameEl = document.getElementById('student-name');
+    const gradeEl = document.getElementById('student-grade');
+    nameEl.classList.remove('input-error');
+    gradeEl.classList.remove('input-error');
 
-            // Show options
-            const optionsContainer = document.getElementById('options');
-            optionsContainer.innerHTML = '';
-            const letters = ['A', 'B', 'C', 'D'];
+    studentName = nameEl.value.trim();
+    studentGrade = gradeEl.value;
 
-            question.options.forEach((option, index) => {
-                const optionDiv = document.createElement('div');
-                optionDiv.className = 'option';
-                optionDiv.onclick = () => selectOption(index);
-                optionDiv.innerHTML = `
-                    <span class="option-letter">${letters[index]}</span>
-                    <span class="option-text">${option}</span>
-                `;
-                optionsContainer.appendChild(optionDiv);
-            });
+    let valid = true;
+    if (!studentName) { nameEl.classList.add('input-error'); valid = false; }
+    if (!studentGrade) { gradeEl.classList.add('input-error'); valid = false; }
+    if (!valid) return;
 
-            // Reset button
-            selectedAnswer = null;
-            document.getElementById('next-button').disabled = true;
+    gradeGroup = getGradeGroup(studentGrade);
+    questions = shuffleArray(questionBank[gradeGroup]);
+    currentQ = 0;
+    selectedAnswer = null;
+    userAnswers = [];
+    tabSwitchCount = 0;
+    quizStartTime = new Date();
+    quizActive = true;
+
+    document.getElementById('start-screen').classList.add('hidden');
+    document.getElementById('quiz-screen').classList.remove('hidden');
+    showQuestion();
+}
+
+function showQuestion() {
+    const qData = questions[currentQ];
+    const total = questions.length;
+
+    document.getElementById('progress-fill').style.width = `${((currentQ) / total) * 100}%`;
+    document.getElementById('question-counter').textContent = `Question ${currentQ + 1} of ${total}`;
+
+    // badge
+    const badge = document.getElementById('category-badge');
+    const catMap = { verbal:['Verbal','badge-verbal'], quant:['Quantitative','badge-quant'], logic:['Logical','badge-logic'], pattern:['Pattern','badge-pattern'] };
+    const [catLabel, catClass] = catMap[qData.cat] || ['General','badge-logic'];
+    badge.textContent = catLabel;
+    badge.className = 'badge ' + catClass;
+
+    // question text
+    document.getElementById('question-text').textContent = qData.q;
+
+    // code block
+    const codeEl = document.getElementById('code-block');
+    if (qData.code) { codeEl.textContent = qData.code; codeEl.classList.remove('hidden'); } else { codeEl.classList.add('hidden'); }
+
+    // pattern grid
+    const patternContainer = document.getElementById('pattern-container');
+    patternContainer.innerHTML = '';
+    if (qData.grid) {
+        const g = qData.grid;
+        const gridEl = document.createElement('div');
+        gridEl.className = 'pattern-grid';
+        gridEl.style.gridTemplateColumns = `repeat(${g.cols}, 52px)`;
+        g.cells.forEach(cell => {
+            const cellEl = document.createElement('div');
+            cellEl.className = 'pattern-cell' + (cell === '?' ? ' highlight' : '');
+            cellEl.textContent = cell;
+            gridEl.appendChild(cellEl);
+        });
+        patternContainer.appendChild(gridEl);
+    }
+
+    // options
+    const optContainer = document.getElementById('options');
+    optContainer.innerHTML = '';
+    const letters = ['A','B','C','D'];
+    qData.opts.forEach((opt, i) => {
+        const div = document.createElement('div');
+        div.className = 'option';
+        div.onclick = () => selectOption(i);
+        div.innerHTML = `<span class="option-letter">${letters[i]}</span><span class="option-text">${opt}</span>`;
+        optContainer.appendChild(div);
+    });
+
+    selectedAnswer = null;
+    document.getElementById('next-button').disabled = true;
+
+    // timer
+    startTimer(qData.time || 60);
+}
+
+function selectOption(i) {
+    document.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
+    document.querySelectorAll('.option')[i].classList.add('selected');
+    selectedAnswer = i;
+    document.getElementById('next-button').disabled = false;
+}
+
+function startTimer(seconds) {
+    clearInterval(timerInterval);
+    timeLeft = seconds;
+    updateTimerDisplay();
+    timerInterval = setInterval(() => {
+        timeLeft--;
+        updateTimerDisplay();
+        if (timeLeft <= 0) {
+            clearInterval(timerInterval);
+            // time ran out — record as wrong and move on
+            recordAnswer(true);
+            currentQ++;
+            if (currentQ >= questions.length) showResults();
+            else showQuestion();
         }
+    }, 1000);
+}
 
-        function selectOption(index) {
-            document.querySelectorAll('.option').forEach(opt => opt.classList.remove('selected'));
-            document.querySelectorAll('.option')[index].classList.add('selected');
-            selectedAnswer = index;
-            document.getElementById('next-button').disabled = false;
-        }
+function updateTimerDisplay() {
+    const m = String(Math.floor(timeLeft / 60)).padStart(2,'0');
+    const s = String(timeLeft % 60).padStart(2,'0');
+    const el = document.getElementById('timer-display');
+    el.textContent = `${m}:${s}`;
+    el.classList.toggle('warning', timeLeft <= 10);
+}
 
-        function nextQuestion() {
-            const question = allQuestions[currentQuestion];
-            const isCorrect = selectedAnswer === question.correct;
+function recordAnswer(timedOut) {
+    const qData = questions[currentQ];
+    const chosen = timedOut ? null : selectedAnswer;
+    const isCorrect = chosen === qData.ans;
+    userAnswers.push({
+        questionNum: currentQ + 1,
+        cat: qData.cat,
+        question: qData.q,
+        selected: chosen !== null ? qData.opts[chosen] : '(Time ran out)',
+        correct: qData.opts[qData.ans],
+        isCorrect
+    });
+}
 
-            userAnswers.push({
-                questionNum: currentQuestion + 1,
-                section: currentQuestion < FOR_COUNT ? 'For Loop' : 'While Loop',
-                question: question.question,
-                selected: question.options[selectedAnswer],
-                correct: question.options[question.correct],
-                isCorrect: isCorrect
-            });
+function nextQuestion() {
+    clearInterval(timerInterval);
+    recordAnswer(false);
+    currentQ++;
+    if (currentQ >= questions.length) showResults();
+    else showQuestion();
+}
 
-            if (isCorrect) {
-                if (currentQuestion < FOR_COUNT) {
-                    forCorrect++;
-                } else {
-                    whileCorrect++;
-                }
-            }
+// ══════════════════════════════════════════════
+//  RESULTS & EMAIL
+// ══════════════════════════════════════════════
+function showResults() {
+    clearInterval(timerInterval);
+    quizActive = false;
+    document.getElementById('progress-fill').style.width = '100%';
+    document.getElementById('quiz-screen').classList.add('hidden');
+    document.getElementById('results-screen').classList.remove('hidden');
+    document.getElementById('results-name').textContent = `${studentName} — Grade ${studentGrade}`;
+    sendResults();
+}
 
-            currentQuestion++;
+function sendResults() {
+    const statusEl = document.getElementById('email-status');
+    statusEl.textContent = 'Submitting your answers...';
+    statusEl.style.color = '#58a6ff';
 
-            if (currentQuestion >= TOTAL_QUESTIONS) {
-                showResults();
-            } else {
-                showQuestion();
-            }
-        }
+    const total = questions.length;
+    const correct = userAnswers.filter(a => a.isCorrect).length;
 
-        function showResults() {
-            document.getElementById('quiz-screen').classList.add('hidden');
-            document.getElementById('results-screen').classList.remove('hidden');
+    // per-category scores
+    const cats = {};
+    userAnswers.forEach(a => {
+        if (!cats[a.cat]) cats[a.cat] = { right:0, total:0 };
+        cats[a.cat].total++;
+        if (a.isCorrect) cats[a.cat].right++;
+    });
 
-            const total = forCorrect + whileCorrect;
-            document.getElementById('student-result-name').textContent = `Well done, ${studentName}!`;
+    let catSummary = '';
+    const catNames = { verbal:'Verbal', quant:'Quantitative', logic:'Logical', pattern:'Pattern' };
+    for (const c in cats) {
+        catSummary += `${catNames[c] || c}: ${cats[c].right}/${cats[c].total}\n`;
+    }
 
-            sendResultsEmail(total);
-        }
+    let detail = '\n=== DETAILED ANSWERS ===\n';
+    userAnswers.forEach(a => {
+        const status = a.isCorrect ? 'CORRECT' : 'WRONG';
+        detail += `\nQ${a.questionNum} [${catNames[a.cat]||a.cat}]: ${a.question}\n`;
+        detail += `Selected: ${a.selected}\n`;
+        detail += `Correct: ${a.correct}\n`;
+        detail += `Result: ${status}\n---`;
+    });
 
-        function sendResultsEmail(total) {
-            const statusEl = document.getElementById('email-status');
-            statusEl.textContent = 'Submitting your answers...';
+    const quizEndTime = new Date();
+    const duration = Math.round((quizEndTime - quizStartTime) / 1000);
+    const mins = Math.floor(duration / 60);
+    const secs = duration % 60;
 
-            let answersDetail = `\n=== DETAILED ANSWERS ===\n`;
-            userAnswers.forEach((ans) => {
-                const status = ans.isCorrect ? 'CORRECT' : 'WRONG';
-                answersDetail += `\nQ${ans.questionNum} [${ans.section}]: ${ans.question}\n`;
-                answersDetail += `Selected: ${ans.selected}\n`;
-                answersDetail += `Correct Answer: ${ans.correct}\n`;
-                answersDetail += `Result: ${status}\n`;
-                answersDetail += `---`;
-            });
+    const formData = new FormData();
+    formData.append('Student Name', studentName);
+    formData.append('Grade', studentGrade);
+    formData.append('Grade Group', gradeGroup);
+    formData.append('Total Score', `${correct}/${total}`);
+    formData.append('Percentage', `${Math.round((correct/total)*100)}%`);
+    formData.append('Category Scores', catSummary);
+    formData.append('Tab Switches (cheating attempts)', tabSwitchCount);
+    formData.append('Time Taken', `${mins}m ${secs}s`);
+    formData.append('Answers Detail', detail);
+    formData.append('_subject', `IQ Test: ${studentName} (Grade ${studentGrade}) — ${correct}/${total} — ${tabSwitchCount} tab switches`);
 
-            const formData = new FormData();
-            formData.append('Student Name', studentName);
-            formData.append('Total Score', `${total}/${TOTAL_QUESTIONS}`);
-            formData.append('For Loop Score', `${forCorrect}/${FOR_COUNT}`);
-            formData.append('While Loop Score', `${whileCorrect}/${TOTAL_QUESTIONS - FOR_COUNT}`);
-            formData.append('Answers Detail', answersDetail);
-            formData.append('_subject', `Quiz Result: ${studentName} scored ${total}/${TOTAL_QUESTIONS}`);
-
-            fetch('https://formsubmit.co/ajax/ibrahimfakhreyams@gmail.com', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                statusEl.textContent = 'Your answers have been submitted successfully!';
-                statusEl.style.color = '#3fb950';
-            })
-            .catch(error => {
-                statusEl.textContent = 'Submission complete. Please inform your teacher.';
-                statusEl.style.color = '#f85149';
-            });
-        }
-
-        function restartQuiz() {
-            currentQuestion = 0;
-            selectedAnswer = null;
-            forCorrect = 0;
-            whileCorrect = 0;
-            studentName = '';
-            userAnswers = [];
-
-            document.getElementById('student-name').value = '';
-            document.getElementById('email-status').textContent = '';
-            document.getElementById('results-screen').classList.add('hidden');
-            document.getElementById('start-screen').classList.remove('hidden');
-        }
-    </script>
+    fetch('https://formsubmit.co/ajax/ibrahimfakhreyams@gmail.com', {
+        method: 'POST',
+        body: formData
+    })
+    .then(r => r.json())
+    .then(() => {
+        statusEl.textContent = 'Your answers have been submitted successfully!';
+        statusEl.style.color = '#3fb950';
+    })
+    .catch(() => {
+        statusEl.textContent = 'Submission complete. Please inform your teacher.';
+        statusEl.style.color = '#f0883e';
+    });
+}
+</script>
 </body>
 </html>
